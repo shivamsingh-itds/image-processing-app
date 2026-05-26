@@ -8,7 +8,6 @@ import io
 st.title("Image Processing App")
 st.markdown("---")
 
-# Sidebar parameters
 st.sidebar.header("Parameters")
 
 width       = st.sidebar.number_input("Width (px)",  min_value=100, max_value=3840, value=1080, step=10)
@@ -17,7 +16,7 @@ blur_kernel = st.sidebar.slider("Blur Amount", min_value=1, max_value=51, value=
 edge_low    = st.sidebar.slider("Edge Lower Threshold", min_value=0, max_value=255, value=100)
 edge_high   = st.sidebar.slider("Edge Upper Threshold", min_value=0, max_value=255, value=200)
 
-# ── Helper: convert image array to downloadable bytes ──
+# Helper: convert image array to downloadable bytes 
 def image_to_bytes(img_array, filename="result.png"):
     pil_img = Image.fromarray(img_array)
     buf = io.BytesIO()
@@ -25,13 +24,13 @@ def image_to_bytes(img_array, filename="result.png"):
     buf.seek(0)
     return buf
 
-# ── Image Source Selection ──
+# Image Source Selection 
 st.subheader("Select Image Source")
 option = st.radio("", ["Browse (Upload)", "Sample (from images folder)"], horizontal=True)
 
 img_rgb = None
 
-# ── Option 1: Upload ──
+# Option 1: Upload 
 if option == "Browse (Upload)":
     uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png", "bmp"])
     if uploaded_file is not None:
@@ -39,7 +38,7 @@ if option == "Browse (Upload)":
         img_bgr    = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
         img_rgb    = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
 
-# ── Option 2: Sample folder ──
+# Option 2: Sample folder 
 elif option == "Sample (from images folder)":
     IMAGE_FOLDER = "images"
     image_files  = []
@@ -58,20 +57,20 @@ elif option == "Sample (from images folder)":
     img_bgr       = cv2.imread(image_path)
     img_rgb       = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
 
-# ── Stop if no image loaded ──
+# Stop if no image loaded
 if img_rgb is None:
     st.info("Please select or upload an image to continue.")
     st.stop()
 
-# ── Resize ──
+# Resize
 img_resized = cv2.resize(img_rgb, (width, height))
 
-# ── Show resized image ──
+# Show resized image
 st.markdown("---")
 st.subheader("Resized Image")
 st.image(img_resized, caption=f"{width} x {height} px", use_container_width=True)
 
-# ── Download original resized image ──
+# Download original resized image
 st.download_button(
     label     = "Download Resized Image",
     data      = image_to_bytes(img_resized),
@@ -82,13 +81,13 @@ st.download_button(
 st.markdown("---")
 st.subheader("Apply Effect")
 
-# ── Buttons ──
+# Buttons
 col1, col2, col3 = st.columns(3)
 gray_btn = col1.button("Gray", use_container_width=True)
 blur_btn = col2.button("Blur", use_container_width=True)
 edge_btn = col3.button("Edge", use_container_width=True)
 
-# ── Process, Show & Download ──
+# Process, Show & Download 
 result        = None
 result_name   = "result.png"
 result_label  = "Download Result"
@@ -116,7 +115,7 @@ elif edge_btn:
 else:
     st.info("Click a button above to apply an effect.")
 
-# ── Show download button only after effect is applied ──
+# download button only after effect is applied
 if result is not None:
     st.download_button(
         label     = result_label,
